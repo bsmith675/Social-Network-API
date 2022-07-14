@@ -1,22 +1,33 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const app = express();
-const PORT = process.env.PORT || 3001;
+// EXPRESS 
+const express = require('express')
+const app = express()
+const PORT = process.env.PORT || 3001
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// MONGOOSE 
+const mongoose = require('mongoose')
 
-app.use(require("./routes"));
-
-mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost/social-network",
-  {
-    useFindAndModify: false,
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/Social-Network-Api', {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
+    useUnifiedTopology: true
+})
+
+mongoose.connection.on('connected', () =>
+console.log('Connected to MongoDB Endpoint')
 );
 
-mongoose.set("debug", true);
+mongoose.connection.on('error', (err) =>
+console.log(`MONGOOSE DISCONNECTED ERROR: ${err}`)
+);
 
-app.listen(PORT, () => console.log(`Connected on localhost:${PORT}`));
+mongoose.set('debug', true)
+
+// FILES
+app.use(require('./routes'));
+
+
+// Server Listen 
+app.listen(PORT, () => {
+console.log((`Connected on localhost:${PORT}`))
+})
